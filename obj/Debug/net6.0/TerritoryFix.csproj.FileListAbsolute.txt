@@ -1,0 +1,17 @@
+/Users/johngant/Source/TerritoryFix/bin/Debug/net6.0/TerritoryFix
+/Users/johngant/Source/TerritoryFix/bin/Debug/net6.0/TerritoryFix.deps.json
+/Users/johngant/Source/TerritoryFix/bin/Debug/net6.0/TerritoryFix.runtimeconfig.json
+/Users/johngant/Source/TerritoryFix/bin/Debug/net6.0/TerritoryFix.dll
+/Users/johngant/Source/TerritoryFix/bin/Debug/net6.0/ref/TerritoryFix.dll
+/Users/johngant/Source/TerritoryFix/bin/Debug/net6.0/TerritoryFix.pdb
+/Users/johngant/Source/TerritoryFix/bin/Debug/net6.0/Newtonsoft.Json.dll
+/Users/johngant/Source/TerritoryFix/obj/Debug/net6.0/TerritoryFix.csproj.AssemblyReference.cache
+/Users/johngant/Source/TerritoryFix/obj/Debug/net6.0/TerritoryFix.GeneratedMSBuildEditorConfig.editorconfig
+/Users/johngant/Source/TerritoryFix/obj/Debug/net6.0/TerritoryFix.AssemblyInfoInputs.cache
+/Users/johngant/Source/TerritoryFix/obj/Debug/net6.0/TerritoryFix.AssemblyInfo.cs
+/Users/johngant/Source/TerritoryFix/obj/Debug/net6.0/TerritoryFix.csproj.CoreCompileInputs.cache
+/Users/johngant/Source/TerritoryFix/obj/Debug/net6.0/TerritoryFix.csproj.CopyComplete
+/Users/johngant/Source/TerritoryFix/obj/Debug/net6.0/TerritoryFix.dll
+/Users/johngant/Source/TerritoryFix/obj/Debug/net6.0/ref/TerritoryFix.dll
+/Users/johngant/Source/TerritoryFix/obj/Debug/net6.0/TerritoryFix.pdb
+/Users/johngant/Source/TerritoryFix/obj/Debug/net6.0/TerritoryFix.genruntimeconfig.cache
