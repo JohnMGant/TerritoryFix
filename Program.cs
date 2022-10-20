@@ -2,21 +2,21 @@
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 
-const string inputFilePath = "/Users/johngant/territories.json";
-const string outputFilePath = "/Users/johngant/territories.csv";
+//This is based on the specific residential and business territory naming packages I used in TA
 Regex newResidentialPattern = new(@"^[NX]-(?<area>\p{Lu}{2})-(?<number>\d{2})$");
 Regex businessPattern = new(@"^B-(?<number>\d{2})$");
 
+string inputFilePath = args[0];
+string outputFilePath = args[1];
+string apiKey = args[2];
+string styleName = args[3];
+string colorHex = args[4];
+decimal opacityRatio = decimal.Parse(args[5]);
+int width = int.Parse(args[6]);
+int height = int.Parse(args[7]);
+string imageDirectory = args[8];
+
 IEnumerable<Territory> territories = JsonConvert.DeserializeObject<IEnumerable<Territory>>(File.ReadAllText(inputFilePath)) ?? throw new InvalidOperationException();
-
-string apiKey = args[0];
-string styleName = args[1];
-string colorHex = args[2];
-decimal opacityRatio = decimal.Parse(args[3]);
-int width = int.Parse(args[4]);
-int height = int.Parse(args[5]);
-string imageDirectory = args[6];
-
 MapboxUtility mapbox = new(apiKey, styleName, colorHex, opacityRatio, width, height);
 
 var residentialTerritories =
