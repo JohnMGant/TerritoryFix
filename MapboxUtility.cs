@@ -1,64 +1,34 @@
 using System.Drawing;
 using System.Text;
+using Newtonsoft.Json;
 
 public class MapboxUtility
 {
 
     private readonly string apiKey;
     private readonly string styleName;
-    private readonly Color pathColor;
-    private readonly Color fillColor;
-    private readonly Size size;
+    private readonly string colorHex;
+    private readonly decimal opacityRatio;
+    private readonly int width;
+    private readonly int height;
 
-    public MapboxUtility(string apiKey, string styleName, Color pathColor, Color fillColor, Size size)
+    public MapboxUtility(string apiKey, string styleName, string colorHex, decimal opacityRatio, int width, int height)
     {
         this.apiKey = apiKey;
         this.styleName = styleName;
-        this.pathColor = pathColor;
-        this.fillColor = fillColor;
-        this.size = size;
+        this.colorHex = colorHex;
+        this.opacityRatio = opacityRatio;
+        this.width = width;
+        this.height = height;
     }
 
     public string GetMapboxUrl(IEnumerable<Coordinate> coordinates)
     {
-        //https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/path-2+ffaa00+ffaa00-0.2(_seK_ibE_seK_seK_seK_seK)/auto/900x600?access_token=pk.eyJ1Ijoiam1nYW50IiwiYSI6ImNsOHRhandjazAweGEzbmxoMGRkbmphMmsifQ.deVAt4ooCD4vowzMFm5aOQ
+        //https://docs.mapbox.com/api/maps/static-images/
         string baseEndpoint = "https://api.mapbox.com/styles/v1/mapbox";
-        var (min, max) = GetBoundingBox(coordinates);
-        string encodedPath = PolylineUtility.EncodePolyline(coordinates);
-        string colorInfo = $"{pathColor.R:X2}{pathColor.G:X2}{pathColor.B:X2}+{fillColor.R:X2}{fillColor.G:X2}{fillColor.B:X2}-{fillColor.A / 255D}";
-        return $"{baseEndpoint}/{styleName}/static/path-2+{colorInfo}({Uri.EscapeDataString(encodedPath)})/[{min.Longitude},{min.Latitude},{max.Longitude},{max.Latitude}]/{size.Width}x{size.Height}?padding=10&access_token={apiKey}";
+        string geoJsonString = JsonConvert.SerializeObject(GeoJsonUtility.WrapGeoJsonWithStyle(GeoJsonUtility.GetGeoJsonPolygon(new[] { coordinates }), colorHex, opacityRatio));
+        string geoJson = Uri.EscapeDataString(geoJsonString);
+        return $"{baseEndpoint}/{styleName}/static/geojson({geoJson})/auto/{width}x{height}?padding=10&access_token={apiKey}";
     }
 
-    private (Coordinate min, Coordinate max) GetBoundingBox(IEnumerable<Coordinate> coordinates)
-    {
-        decimal minLat = decimal.MaxValue;
-        decimal minLng = decimal.MaxValue;
-        decimal maxLat = decimal.MinValue;
-        decimal maxLng = decimal.MinValue;
-        foreach (Coordinate coordinate in coordinates)
-        {
-            if (coordinate.Latitude < minLat)
-            {
-                minLat = coordinate.Latitude;
-            }
-            if (coordinate.Longitude < minLng)
-            {
-                minLng = coordinate.Longitude;
-            }
-            if (coordinate.Latitude > maxLat)
-            {
-                maxLat = coordinate.Latitude;
-            }
-            if (coordinate.Longitude > maxLng)
-            {
-                maxLng = coordinate.Longitude;
-            }
-        }
-        decimal latRange = maxLat - minLat;
-        decimal lngRange = maxLng - minLng;
-        decimal buffer = latRange * .025M;
-        Coordinate min = new Coordinate { Latitude = minLat - buffer, Longitude = minLng - buffer };
-        Coordinate max = new Coordinate { Latitude = maxLat + buffer, Longitude = maxLng + buffer };
-        return (min, max);
-    }
 }

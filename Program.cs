@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using System.Text;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 
@@ -10,12 +9,15 @@ Regex businessPattern = new(@"^B-(?<number>\d{2})$");
 
 IEnumerable<Territory> territories = JsonConvert.DeserializeObject<IEnumerable<Territory>>(File.ReadAllText(inputFilePath)) ?? throw new InvalidOperationException();
 
-MapboxUtility mapbox = new(
-    "[mapbox api key needed]",
-    "light-v10",
-    Color.FromArgb(0x99, 0x4c, 0xb3),
-    Color.FromArgb((int)Math.Round(255 * .2), 0x99, 0x4c, 0xb3),
-    new Size(1200, 800));
+string apiKey = args[0];
+string styleName = args[1];
+string colorHex = args[2];
+decimal opacityRatio = decimal.Parse(args[3]);
+int width = int.Parse(args[4]);
+int height = int.Parse(args[5]);
+string imageDirectory = args[6];
+
+MapboxUtility mapbox = new(apiKey, styleName, colorHex, opacityRatio, width, height);
 
 var residentialTerritories =
     (
@@ -61,6 +63,8 @@ var businessTerritories =
         Coordinates = t.Boundary
     };
 
+var allTerritories = residentialTerritories.Concat(businessTerritories).ToArray();
+
 string q = "\"";
 string qcq = "\",\"";
 Func<Coordinate, string> formatCoordinates = coords =>
@@ -70,8 +74,18 @@ Func<IEnumerable<Coordinate>?, string> formatPath = coordSet =>
 File.WriteAllText(outputFilePath, $"{q}TypeCode{qcq}TypeName{qcq}Number{qcq}Area{qcq}Link{qcq}Notes{qcq}OldNumber{qcq}Coordinates{q}\n");
 File.AppendAllLines(
     outputFilePath,
-    residentialTerritories.Concat(businessTerritories).Select(t =>
+    allTerritories.Select(t =>
     $"{q}{t.TypeCode}{qcq}{t.TypeName}{qcq}{t.Number}{qcq}{t.Area}{qcq}{t.Link}{qcq}{t.Notes}{qcq}{t.OldNumber}{qcq}{formatPath(t.Coordinates)}{q}"));
 
+if (!Directory.Exists(imageDirectory))
+{
+    Directory.CreateDirectory(imageDirectory);
+}
 
-
+HttpClient client = new();
+foreach (var territory in allTerritories)
+{
+    string fileName = Path.Combine(imageDirectory, $"{territory.TypeCode}-{territory.Number}.png");
+    byte[] imageData = client.GetByteArrayAsync(territory.Link).Result;
+    File.WriteAllBytes(fileName, imageData);
+}
